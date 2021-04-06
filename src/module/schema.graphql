@@ -1,3 +1,10 @@
-type Query{
- getMyProfile: User
+type Query {
+ getMyProfile: User,
+ getAllTrainees: [Trainee]
+}
+
+type Mutation {
+  CreateTrainee(input: createTrainee): getTraineeDetails
+  UpdateTrainee(id:ID!, input: updateTrainee): getTraineeDetails
+  DeleteTrainee(id:ID!): getTraineeDetails
 }

@@ -1,18 +1,8 @@
-type Trainee {
-  id:ID
-  name: String
-  email:String
+input CreateUserInput {
+ name: String!
+ email: String!
+ role: String!
 }
-type getTraineeDetails {
-  data: [Trainee]
-  message: String
-  status: Int
-}
-input createTrainee {
-  name: String,
-  email: String
-}
-input updateTrainee {
-  name: String,
-  email:String
+type Id {
+ id: ID!
 }

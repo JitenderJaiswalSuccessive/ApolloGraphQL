@@ -1,35 +1,26 @@
 const users = require('../../service/user');
+const pubsub = require('../pubsub');
+const constant = require('../../lib/constant');
+const userInstance = require('../../service/user');
 
 module.exports = {
-    CreateTrainee:  (parent, args) => {
-        const { input } = args;
-        const { name, email } = input;
-        const user = { id: users.length + 1, name : name, email : email }
-        users.push(user);
-        return {data: users, message:"Trainee created successfully", status :200};
-    },
-    UpdateTrainee:  (parent, args) => {
-        const { id, input } = args;
-        const { name, email } = input;
+    createTrainee:  (parent, args) => {
+        const { user } = args;
         console.log(args);
-        let index = users.findIndex((user) => user.id == id);
-        if(index === -1)
-          return {data: null, message:"Trainee id not found", status :500};
-        
-        users[index].name  = name;
-        users[index].email = email;
-        console.log(users);
-        return {data: users, message:"Trainee updated successfully", status :200};
-        
+        const addedUser = userInstance.createUser(user);
+        pubsub.publish(constant.subscriptions.TRAINEE_ADDED, {traineeAdded: addedUser});
+        return addedUser;
     },
-    DeleteTrainee:  (parent, args) => {
+    updateTrainee:  (parent, args) => {
+        const { id, role } = args;
+        const updateUser = userInstance.updateUser(id, role);
+        pubsub.publish(constant.subscriptions.TRAINEE_UPDATED, {traineeUpdated: updateUser });
+        return updateUser;
+    },
+    deleteTrainee:  (parent, args) => {
         const { id } = args;
-        let index = users.findIndex((user) => user.id == id);
-
-        if(index === -1)
-           return {data: null, message:"Trainee id not found", status :500};
-        
-        users.splice(index, 1);
-        return {data: users, message:"Trainee deleted successfully", status :200}; 
+        const deletedId = userInstance.deleteUser(id);
+        pubsub.publish(constant.subscriptions.TRAINEE_DELETED, {traineeDeleted: deletedId });
+        return deletedId;
     },
 }

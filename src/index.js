@@ -1,11 +1,10 @@
-const {fileLoader,mergeTypes}=require('merge-graphql-schemas');
-const path=require('path');
-const resolvers=require('./module');
+const schema = require('./module/index');
+const Server = require('./server');
+const config = require('./config/configuration');
 
-const typesArray = fileLoader(path.join(__dirname,'./**/*.graphql'));
-const typeDefs = mergeTypes(typesArray,{all:true});
+const server = new Server(config);
 
-module.exports = {
-    resolvers,
-    typeDefs
-}
+(() => {
+    server.bootstrap().setupApollo(schema);
+})();
+
